@@ -1,10 +1,12 @@
 package ru.rockutor.editor.domain;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
  * Статус документа
  */
+@Getter
 @RequiredArgsConstructor
 public enum DocumentStatus {
     DRAFT("Черновик"),
@@ -12,5 +14,5 @@ public enum DocumentStatus {
     SIGNED("Подписан"),
     REFUSE("Отказ");
 
-    private final String name;
+    private final String label;
 }

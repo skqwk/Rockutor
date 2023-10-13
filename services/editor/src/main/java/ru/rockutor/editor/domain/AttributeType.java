@@ -1,7 +1,9 @@
 package ru.rockutor.editor.domain;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum AttributeType {
 
@@ -9,5 +11,5 @@ public enum AttributeType {
     IMAGE("Изображение"),
     TABLE("Таблица");
 
-    private final String name;
+    private final String label;
 }

@@ -9,4 +9,5 @@ import java.util.UUID;
  * Репозиторий для работы с документами
  */
 public interface DocumentRepo extends JpaRepository<Document, UUID> {
+
 }

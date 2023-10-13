@@ -1,5 +1,7 @@
 package ru.rockutor.editor.usecase;
 
+import ru.rockutor.editor.domain.DocumentStatus;
+
 import java.util.UUID;
 
 /**
@@ -10,6 +12,8 @@ public interface SendForSigningUseCase {
      * Отправить документ на подписание
      *
      * @param documentId идентификатор документа
+     *
+     * @return статус документа после отправки
      */
-    void sendForSigning(UUID documentId);
+    DocumentStatus sendForSigning(UUID documentId);
 }
