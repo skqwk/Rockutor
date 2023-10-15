@@ -1,4 +1,4 @@
-package ru.rockutor.signer.domain;
+package ru.rockutor.sign;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

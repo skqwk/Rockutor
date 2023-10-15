@@ -1,4 +1,4 @@
-package ru.rockutor.editor.util;
+package ru.rockutor.util;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -16,6 +16,6 @@ public class Formatter {
     public static String format(Instant instant) {
         return Optional.ofNullable(instant)
                 .map(formatter::format)
-                .orElse(PATTERN_FORMAT);
+                .orElse(null);
     }
 }

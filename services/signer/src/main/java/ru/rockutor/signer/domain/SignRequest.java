@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import ru.rockutor.sign.SignStatus;
 
 import java.time.Instant;
 import java.util.UUID;

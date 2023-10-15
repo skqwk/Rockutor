@@ -3,10 +3,10 @@ package ru.rockutor.signer.usecase.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.rockutor.signer.controller.dto.SignRq;
+import ru.rockutor.sign.SignStatus;
+import ru.rockutor.signer.producer.SignResultProducer;
 import ru.rockutor.signer.domain.RequestCriteria;
 import ru.rockutor.signer.domain.SignRequest;
-import ru.rockutor.signer.domain.SignStatus;
 import ru.rockutor.signer.repo.SignRequestRepo;
 import ru.rockutor.signer.usecase.SignDocumentUseCase;
 
@@ -17,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SignDocumentUseCaseImpl implements SignDocumentUseCase {
     private final SignRequestRepo signRequestRepo;
+    private final SignResultProducer producer;
 
     @Override
     @Transactional
@@ -31,6 +32,7 @@ public class SignDocumentUseCaseImpl implements SignDocumentUseCase {
         signRequest.setStatus(SignStatus.SIGNED);
 
         signRequestRepo.save(signRequest);
+        producer.send(signRequest);
 
         return signRequest.getStatus();
     }

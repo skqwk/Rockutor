@@ -1,7 +1,7 @@
 package ru.rockutor.signer.usecase;
 
+import ru.rockutor.sign.SignStatus;
 import ru.rockutor.signer.domain.RequestCriteria;
-import ru.rockutor.signer.domain.SignStatus;
 
 /**
  * Use-case для отмены подписания документа
