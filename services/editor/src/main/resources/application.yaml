@@ -1,30 +1,5 @@
-server:
-  port: 8081
-
-sign:
-  groupId: sign-group
-  result:
-    topic: sign-result-topic
-  task:
-    topic: sign-task-topic
-
 spring:
-  kafka:
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "ru.rockutor.sign"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-
-  datasource:
-    password: editor
-    url: "jdbc:postgresql://localhost:5481/editor-db"
-    username: editor
-    driver-class-name: org.postgresql.Driver
+  application:
+    name: editor
+  config:
+    import: optional:configserver:${CONFIG_URL:http://localhost:8888}

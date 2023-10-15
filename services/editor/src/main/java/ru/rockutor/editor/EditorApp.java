@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EditorApplication {
+public class EditorApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(EditorApplication.class, args);
+        SpringApplication.run(EditorApp.class, args);
     }
 
 }
