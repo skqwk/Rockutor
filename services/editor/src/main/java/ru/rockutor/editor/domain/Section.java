@@ -9,6 +9,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,5 +33,5 @@ public class Section {
      * Атрибуты секции
      */
     @OneToMany
-    private List<Attribute> attributes;
+    private List<Attribute> attributes = new ArrayList<>();
 }

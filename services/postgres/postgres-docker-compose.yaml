@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  editor-db:
+    image: ${POSTGRES_IMAGE}
+    container_name: ${EDITOR_DB_HOST}
+    environment:
+      - POSTGRES_USER=${EDITOR_DB_USER}
+      - POSTGRES_PASSWORD=${EDITOR_DB_PASSWORD}
+      - POSTGRES_DB=${EDITOR_DB_NAME}
+    command: postgres -p ${DATABASE_PORT}
+    ports:
+      - ${EDITOR_DB_EXT_PORT}:${DATABASE_PORT}
+    volumes:
+      - ./editor-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  signer-db:
+    image: ${POSTGRES_IMAGE}
+    container_name: ${SIGNER_DB_HOST}
+    environment:
+      - POSTGRES_USER=${SIGNER_DB_USER}
+      - POSTGRES_PASSWORD=${SIGNER_DB_PASSWORD}
+      - POSTGRES_DB=${SIGNER_DB_NAME}
+    command: postgres -p ${DATABASE_PORT}
+    ports:
+      - ${SIGNER_DB_EXT_PORT}:${DATABASE_PORT}
+    volumes:
+      - ./signer-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
