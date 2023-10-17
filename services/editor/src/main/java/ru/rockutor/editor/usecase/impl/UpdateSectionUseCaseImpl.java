@@ -9,10 +9,7 @@ import ru.rockutor.editor.domain.Section;
 import ru.rockutor.editor.repo.DocumentRepo;
 import ru.rockutor.editor.usecase.UpdateSectionUseCase;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,18 +23,13 @@ public class UpdateSectionUseCaseImpl implements UpdateSectionUseCase {
     private final DocumentRepo documentRepo;
 
     @Override
-    public Document updateSectionUseCase(UUID documentId,
-                                         String sectionName,
-                                         Map<String, Map<String, Object>> updatedAttributes) {
+    public Document updateSection(UUID documentId,
+                                  String sectionName,
+                                  Map<String, Map<String, Object>> updatedAttributes) {
         Document document = documentRepo.findById(documentId)
                 .orElseThrow();
 
-        Section foundedSection = Optional.ofNullable(document.getSections())
-                .orElseGet(Collections::emptyList)
-                .stream()
-                .filter(section -> section.getName().equals(sectionName))
-                .findFirst()
-                .orElseThrow();
+        Section foundedSection = document.getSectionByName(sectionName).orElseThrow();
 
         Map<String, Attribute> existedAttributes = foundedSection.getAttributes()
                 .stream()
@@ -56,6 +48,8 @@ public class UpdateSectionUseCaseImpl implements UpdateSectionUseCase {
                 existedAttributes.put(key, attribute);
             }
         }
+
+        foundedSection.setAttributes(existedAttributes.values().stream().toList());
 
         return documentRepo.save(document);
     }

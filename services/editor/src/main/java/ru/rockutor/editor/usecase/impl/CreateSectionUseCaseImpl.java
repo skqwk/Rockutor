@@ -3,7 +3,6 @@ package ru.rockutor.editor.usecase.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.ResourceAccessException;
 import ru.rockutor.editor.domain.Document;
 import ru.rockutor.editor.domain.Section;
 import ru.rockutor.editor.repo.DocumentRepo;
@@ -19,7 +18,7 @@ public class CreateSectionUseCaseImpl implements CreateSectionUseCase {
 
     @Override
     @Transactional
-    public Document createSectionUseCase(UUID documentId, String name) {
+    public Document createSection(UUID documentId, String name) {
         Document document = documentRepo.findById(documentId).orElseThrow();
 
         boolean present = document.getSections().stream()

@@ -18,7 +18,7 @@ public interface UpdateSectionUseCase {
      *
      * @return документ
      */
-    Document updateSectionUseCase(UUID documentId,
-                                  String sectionName,
-                                  Map<String, Map<String, Object>> attributes);
+    Document updateSection(UUID documentId,
+                           String sectionName,
+                           Map<String, Map<String, Object>> attributes);
 }

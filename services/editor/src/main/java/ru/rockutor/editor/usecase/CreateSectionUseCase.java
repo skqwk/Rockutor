@@ -16,5 +16,5 @@ public interface CreateSectionUseCase {
      *
      * @return документ
      */
-    Document createSectionUseCase(UUID documentId, String name);
+    Document createSection(UUID documentId, String name);
 }

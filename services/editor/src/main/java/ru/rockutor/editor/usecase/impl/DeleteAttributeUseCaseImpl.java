@@ -1,6 +1,5 @@
 package ru.rockutor.editor.usecase.impl;
 
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +26,7 @@ public class DeleteAttributeUseCaseImpl implements DeleteAttributeUseCase {
                                     String attributeName) {
         Document document = documentRepo.findById(documentId).orElseThrow();
 
-        Section section = document.getSections()
-                .stream()
-                .filter(s -> s.getName().equals(sectionName))
-                .findFirst()
-                .orElseThrow();
+        Section section = document.getSectionByName(sectionName).orElseThrow();
 
         List<Attribute> filteredAttributes = section.getAttributes()
                 .stream()

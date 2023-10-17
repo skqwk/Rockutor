@@ -6,12 +6,12 @@ import ru.rockutor.editor.domain.DocumentStatus;
 import ru.rockutor.editor.producer.SignTaskProducer;
 import ru.rockutor.editor.repo.DocumentRepo;
 
-import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class SendForSigningUseCaseImplTest {

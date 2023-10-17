@@ -27,7 +27,7 @@ class CreateSectionUseCaseImplTest {
 
         // WHEN | THEN
         assertThrows(NoSuchElementException.class,
-                () -> createSectionUseCase.createSectionUseCase(DOCUMENT_ID, SECTION_NAME));
+                () -> createSectionUseCase.createSection(DOCUMENT_ID, SECTION_NAME));
     }
 
     @Test
@@ -43,7 +43,7 @@ class CreateSectionUseCaseImplTest {
 
         // WHEN
         NoSuchElementException exception = assertThrows(NoSuchElementException.class,
-                () -> createSectionUseCase.createSectionUseCase(DOCUMENT_ID, SECTION_NAME));
+                () -> createSectionUseCase.createSection(DOCUMENT_ID, SECTION_NAME));
 
         // THEN
         assertEquals("Секция с названием [sectionName] уже создана", exception.getMessage());
@@ -57,7 +57,7 @@ class CreateSectionUseCaseImplTest {
         when(documentRepo.findById(DOCUMENT_ID)).thenReturn(Optional.of(document));
 
         // WHEN
-        Document actual = createSectionUseCase.createSectionUseCase(DOCUMENT_ID, SECTION_NAME);
+        Document actual = createSectionUseCase.createSection(DOCUMENT_ID, SECTION_NAME);
 
         // THEN
         assertSame(document, actual);

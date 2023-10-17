@@ -2,20 +2,17 @@ package ru.rockutor.editor.usecase.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import ru.rockutor.editor.domain.Document;
 import ru.rockutor.editor.domain.DocumentStatus;
-import ru.rockutor.editor.producer.SignTaskProducer;
 import ru.rockutor.editor.repo.DocumentRepo;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

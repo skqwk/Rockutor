@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -36,4 +37,18 @@ public class Section {
      */
     @OneToMany
     private List<Attribute> attributes = new ArrayList<>();
+
+    public void addAttribute(Attribute attribute) {
+        Optional<Attribute> attributeWithSameNameOpt = attributes.stream()
+                .filter(a -> a.getName().equals(attribute.getName()))
+                .findFirst();
+
+        if (attributeWithSameNameOpt.isPresent()) {
+            Attribute attributeWithSameName = attributeWithSameNameOpt.get();
+            attributeWithSameName.setType(attribute.getType());
+            attributeWithSameName.setValue(attribute.getValue());
+        } else {
+            attributes.add(attribute);
+        }
+    }
 }

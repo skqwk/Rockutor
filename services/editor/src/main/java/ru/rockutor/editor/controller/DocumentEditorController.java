@@ -69,7 +69,7 @@ public class DocumentEditorController {
 
     @PostMapping("/documents/{id}/section/{sectionName}")
     public GetDocumentRs createSection(@PathVariable UUID id, @PathVariable String sectionName) {
-        Document document = createSectionUseCase.createSectionUseCase(id, sectionName);
+        Document document = createSectionUseCase.createSection(id, sectionName);
         return new GetDocumentRs(toDocumentDto(document));
     }
 
@@ -91,7 +91,7 @@ public class DocumentEditorController {
     public GetDocumentRs updateSection(@PathVariable UUID id,
                                        @PathVariable String sectionName,
                                        @RequestBody AttributesRq attributesRq) {
-        Document document = updateSectionUseCase.updateSectionUseCase(id, sectionName, attributesRq.toMap());
+        Document document = updateSectionUseCase.updateSection(id, sectionName, attributesRq.toMap());
         return new GetDocumentRs(toDocumentDto(document));
     }
 

@@ -2,13 +2,13 @@ package ru.rockutor.editor.usecase.impl;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import ru.rockutor.editor.domain.Document;
 import ru.rockutor.editor.domain.DocumentStatus;
 import ru.rockutor.editor.repo.DocumentRepo;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class CreateDocumentUseCaseImplTest {
     private static final String AUTHOR = "author";
