@@ -8,9 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -18,6 +20,7 @@ import java.util.UUID;
  */
 @Entity
 @Getter
+@Setter
 @Table(name = "T_SECTION")
 public class Section {
     @Id
@@ -34,4 +37,18 @@ public class Section {
      */
     @OneToMany
     private List<Attribute> attributes = new ArrayList<>();
+
+    public void addAttribute(Attribute attribute) {
+        Optional<Attribute> attributeWithSameNameOpt = attributes.stream()
+                .filter(a -> a.getName().equals(attribute.getName()))
+                .findFirst();
+
+        if (attributeWithSameNameOpt.isPresent()) {
+            Attribute attributeWithSameName = attributeWithSameNameOpt.get();
+            attributeWithSameName.setType(attribute.getType());
+            attributeWithSameName.setValue(attribute.getValue());
+        } else {
+            attributes.add(attribute);
+        }
+    }
 }

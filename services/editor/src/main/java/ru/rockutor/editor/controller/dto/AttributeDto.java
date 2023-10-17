@@ -1,4 +1,19 @@
 package ru.rockutor.editor.controller.dto;
 
-public record AttributeDto(String type, String value) {
+import java.util.HashMap;
+import java.util.Map;
+
+public record AttributeDto(String type,
+                           String value) {
+    private static final String TYPE = "TYPE";
+    private static final String VALUE = "VALUE";
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> converted = new HashMap<>(2);
+
+        converted.put(TYPE, type);
+        converted.put(VALUE, value);
+
+        return converted;
+    }
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.Builder;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +14,7 @@ import lombok.Setter;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -49,4 +50,16 @@ public class Document {
      */
     @OneToMany
     private List<Section> sections = new ArrayList<>();
+
+    @Transient
+    public Optional<Section> getSectionByName(String sectionName) {
+        return getSections()
+                .stream()
+                .filter(s -> s.getName().equals(sectionName))
+                .findFirst();
+    }
+
+    public void addSection(Section section) {
+        sections.add(section);
+    }
 }
