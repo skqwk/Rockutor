@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.rockutor.sign.SignStatus;
-import ru.rockutor.signer.producer.SignResultProducer;
 import ru.rockutor.signer.domain.RequestCriteria;
 import ru.rockutor.signer.domain.SignRequest;
+import ru.rockutor.signer.producer.SignResultProducer;
 import ru.rockutor.signer.repo.SignRequestRepo;
 import ru.rockutor.signer.usecase.SignDocumentUseCase;
 

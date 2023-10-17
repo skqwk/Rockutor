@@ -3,9 +3,9 @@ package ru.rockutor.signer.usecase.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.rockutor.sign.SignStatus;
-import ru.rockutor.signer.producer.SignResultProducer;
 import ru.rockutor.signer.domain.RequestCriteria;
 import ru.rockutor.signer.domain.SignRequest;
+import ru.rockutor.signer.producer.SignResultProducer;
 import ru.rockutor.signer.repo.SignRequestRepo;
 import ru.rockutor.signer.usecase.CancelDocumentUseCase;
 
