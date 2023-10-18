@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  auth-app:
+    build: .
+    container_name: auth_cont
+    ports:
+      - ${app_port}:${app_port}
+  auth-db:
+    image: postgres:13.3
+    container_name: ${DATABASE_HOST}
+    environment:
+      POSTGRES_DB: ${postgres_db}
+      POSTGRES_USER: ${postgres_user}
+      POSTGRES_PASSWORD: ${postgres_password}
+    volumes:
+      - ./docker/db:/docker-entrypoint-initdb.d
+    command: postgres -p ${DATABASE_PORT_INT}
+    ports:
+      - ${DATABASE_PORT_EXT}:${DATABASE_PORT_INT}
+  auth-redis:
+    container_name: auth_redis
+    image: redis:alpine3.16
+    restart: always
+    ports:
+      - "6379:6379"
