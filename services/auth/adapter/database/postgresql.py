@@ -45,7 +45,7 @@ class PostgresDB:
         except Exception as error:
             logger.error(f"Database: {error.with_traceback()}")
 
-    def create(self, table_name, data: list, column_names="username, password"):
+    def create(self, table_name, data: list, column_names="username, password, user_role"):
         self._connection = self._connect()
         if self._connection:
             cur = self._connection.cursor()

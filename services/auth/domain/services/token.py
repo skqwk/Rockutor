@@ -9,7 +9,7 @@ from jose import jwt, jws
 
 from adapter.database.redis import RedisDB
 from domain.models.jwt import JWTokenStatus
-from domain.models.token import Token
+from domain.models.token import Token, VerifyAnswer
 from settings import config, logger
 
 
@@ -57,10 +57,14 @@ class TokenService:
                                 algorithms=config.ALGORITHM)
 
             expiration_time = json.loads(result.decode('utf-8')).get("exp", None)
+            username = json.loads(result.decode('utf-8')).get("sub", None)
+            role = json.loads(result.decode('utf-8')).get("role", None)
             current_time = int(time.time())
 
             if expiration_time is not None and current_time <= expiration_time:
-                return JWTokenStatus.VALID
+                return VerifyAnswer(username=username,
+                                    role=role,
+                                    message=JWTokenStatus.VALID.value)
             else:
                 return JWTokenStatus.EXPIRED
 
@@ -70,11 +74,12 @@ class TokenService:
 
     def refresh_refresh_token(self, refresh_token: str) -> Union[Token, JWTokenStatus]:
         result_check_refresh = self.verify_token(signed=refresh_token)
-        if result_check_refresh == JWTokenStatus.VALID:
+        if isinstance(result_check_refresh, VerifyAnswer):
             result = jws.verify(refresh_token,
                                 config.SECRET_KEY,
                                 algorithms=config.ALGORITHM)
             username = json.loads(result.decode('utf-8')).get("sub", None)
+            role = json.loads(result.decode('utf-8')).get("role", None)
 
             result_check_in_redis = self.check_refresh_token(username=username, refresh_token=refresh_token)
 
@@ -84,12 +89,12 @@ class TokenService:
             # self.redis_db.extend_token_lifetime(key=username)
             access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
             new_access_token = self.create_access_token(
-                data={"sub": username}, expires_delta=access_token_expires
+                data={"sub": username, "role": role}, expires_delta=access_token_expires
             )
 
             refresh_token_expires = timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
             new_refresh_token = self.create_refresh_token(
-                data={"sub": username}, expires_delta=refresh_token_expires
+                data={"sub": username, "role": role}, expires_delta=refresh_token_expires
             )
 
             return Token(access_token=new_access_token,

@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from domain.models.jwt import JWTokenStatus
 from domain.models.response_model import ErrorResponse, SuccessResponseRegister, SuccessResponseToken, \
     SuccessResponseVerify, Message
-from domain.models.token import Token
+from domain.models.token import Token, VerifyAnswer
 from domain.models.user import User, UserDTO
 from domain.services.token import TokenService
 from domain.services.user import UserService
@@ -31,6 +31,7 @@ async def login_for_access_token(
         return JSONResponse(status_code=400, content={"detail": "Incorrect username or password"})
         #raise HTTPException(status_code=400, detail="Incorrect username or password")
 
+    print(user_find_list)
     user_find = UserDTO.from_list(list_param=user_find_list)
 
     if not user_find_list or user.password != user_find.password:
@@ -40,11 +41,11 @@ async def login_for_access_token(
     # Здесь генерируйте и возвращайте токен OAuth 2.0
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = token_service.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username, "role": user.role}, expires_delta=access_token_expires
     )
     refresh_token_expires = timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
     refresh_token = token_service.create_refresh_token(
-        data={"sub": user.username}, expires_delta=refresh_token_expires
+        data={"sub": user.username, "role": user.role}, expires_delta=refresh_token_expires
     )
     return Token(access_token=access_token,
                  token_type='bearer',
@@ -64,7 +65,7 @@ async def verify_access_token(
 ):
     result_check = token_service.verify_token(signed=token)
 
-    if result_check == JWTokenStatus.VALID:
+    if isinstance(result_check, VerifyAnswer):
         return {"status": "success", "message": "Token is valid", "data": result_check}
         # return JSONResponse(content={"message": "Token is valid"}, status_code=200)
     elif result_check == JWTokenStatus.EXPIRED:
