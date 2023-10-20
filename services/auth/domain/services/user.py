@@ -9,7 +9,7 @@ class UserService:
         self.db = db
 
     def create_user(self, user: User):
-        return self.db.create(table_name='rksp_users', data=[user.username, user.password])
+        return self.db.create(table_name='rksp_users', data=[user.username, user.password, user.role])
 
     def find_user(self, user: User):
         return self.db.find_by_param(table_name='rksp_users',

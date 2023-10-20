@@ -6,4 +6,9 @@ class Token(BaseModel):
     refresh_token: str
     token_type: str
 
+
+class VerifyAnswer(BaseModel):
+    username: str
+    role: str
+    message: str
     
