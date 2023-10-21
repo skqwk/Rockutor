@@ -1,0 +1,79 @@
+version: "3.9"
+services:
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    networks:
+      - rockutor
+
+#  th-db:
+#    image: postgres:13.3
+#    container_name: ${DATABASE_HOST}
+#    environment:
+#      POSTGRES_DB: ${postgres_db}
+#      POSTGRES_USER: ${postgres_user}
+#      POSTGRES_PASSWORD: ${postgres_password}
+#    volumes:
+#      - ./docker/db:/docker-entrypoint-initdb.d
+#    command: postgres -p ${DATABASE_PORT_INT}
+#    ports:
+#      - ${DATABASE_PORT_EXT}:${DATABASE_PORT_INT}
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - rockutor
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${postgres_user}:${postgres_password}@${postgres_host}:${postgres_port}/${postgres_db}?sslmode=disable"
+    links:
+      - prometheus
+    networks:
+      - rockutor
+
+  postgres-exporter2:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - 9188:9187
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${EDITOR_DB_USER}:${EDITOR_DB_PASSWORD}@${EDITOR_DB_HOST}:${DATABASE_PORT}/${EDITOR_DB_NAME}?sslmode=disable"
+    links:
+      - prometheus
+    networks:
+      - rockutor
+
+  postgres-exporter3:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - 9189:9187
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${SIGNER_DB_USER}:${SIGNER_DB_PASSWORD}@${SIGNER_DB_HOST}:${DATABASE_PORT}/${SIGNER_DB_NAME}?sslmode=disable"
+    links:
+      - prometheus
+    networks:
+      - rockutor
+
+  redis-exporter:
+    image: oliver006/redis_exporter
+    ports:
+      - 9121:9121
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: "auth-redis:6379"
+    links:
+      - prometheus
+    networks:
+      - rockutor
+
+networks:
+  rockutor:
+    external: true

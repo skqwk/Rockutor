@@ -6,6 +6,8 @@ services:
     container_name: auth_cont
     ports:
       - ${app_port}:${app_port}
+    networks:
+      - rockutor
   auth-db:
     image: postgres:13.3
     container_name: ${DATABASE_HOST}
@@ -18,9 +20,17 @@ services:
     command: postgres -p ${DATABASE_PORT_INT}
     ports:
       - ${DATABASE_PORT_EXT}:${DATABASE_PORT_INT}
+    networks:
+      - rockutor
   auth-redis:
     container_name: auth_redis
     image: redis:alpine3.16
     restart: always
     ports:
       - "6379:6379"
+    networks:
+      - rockutor
+
+networks:
+  rockutor:
+    external: true

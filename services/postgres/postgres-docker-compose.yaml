@@ -8,6 +8,8 @@ services:
       - POSTGRES_PASSWORD=${EDITOR_DB_PASSWORD}
       - POSTGRES_DB=${EDITOR_DB_NAME}
     command: postgres -p ${DATABASE_PORT}
+    networks:
+      - rockutor
     ports:
       - ${EDITOR_DB_EXT_PORT}:${DATABASE_PORT}
     volumes:
@@ -26,6 +28,8 @@ services:
       - POSTGRES_PASSWORD=${SIGNER_DB_PASSWORD}
       - POSTGRES_DB=${SIGNER_DB_NAME}
     command: postgres -p ${DATABASE_PORT}
+    networks:
+      - rockutor
     ports:
       - ${SIGNER_DB_EXT_PORT}:${DATABASE_PORT}
     volumes:
@@ -35,3 +39,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+networks:
+  rockutor:
+    external: true
