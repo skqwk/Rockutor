@@ -1,6 +1,7 @@
 package ru.rockutor.editor.domain;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,7 +36,7 @@ public class Section {
     /**
      * Атрибуты секции
      */
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Attribute> attributes = new ArrayList<>();
 
     public void addAttribute(Attribute attribute) {

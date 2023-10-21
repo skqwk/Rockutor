@@ -1,6 +1,9 @@
 package ru.rockutor.editor.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +40,10 @@ import java.util.stream.Collectors;
 
 import static ru.rockutor.util.Formatter.format;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
+@Secured("ROLE_EMPLOYEE")
 public class DocumentEditorController {
     private final CreateDocumentUseCase createDocumentUseCase;
     private final SendForSigningUseCase sendForSigningUseCase;
@@ -51,8 +56,8 @@ public class DocumentEditorController {
     private final DeleteAttributeUseCase deleteAttributeUseCase;
 
     @PostMapping("/documents")
-    public CreateDocumentRs createDocument() {
-        String author = ""; // Получение из auth
+    public CreateDocumentRs createDocument(@AuthenticationPrincipal String author) {
+        log.info("Сотрудник [{}] выполнил создание документа", author);
         Document created = createDocumentUseCase.createDocument(author);
         return new CreateDocumentRs(
                 created.getId(),
