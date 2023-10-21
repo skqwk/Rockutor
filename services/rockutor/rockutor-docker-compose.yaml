@@ -1,0 +1,126 @@
+version: "3.9"
+
+networks:
+  auth-network:
+    external: true
+  rockutor-network:
+    name: rockutor-network
+
+
+services:
+  config-app:
+    image: ${CONFIG_APP_NAME}
+    container_name: ${CONFIG_APP_NAME}
+    networks:
+      - rockutor-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${CONFIG_APP_PORT}/actuator/health" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '${CONFIG_APP_PORT}:${CONFIG_APP_PORT}'
+  
+  editor-app:
+    image: ${EDITOR_APP_NAME}
+    container_name: ${EDITOR_APP_NAME}
+    networks:
+      - auth-network
+      - rockutor-network
+    ports:
+      - '${EDITOR_APP_PORT}:${EDITOR_APP_PORT}'
+    environment:
+      SPRING_PROFILES_ACTIVE: ${ACTIVE_PROFILES}
+      CONFIG_URL: 'http://${CONFIG_APP_NAME}:${CONFIG_APP_PORT}'
+    depends_on:
+      editor-db:
+        condition: service_healthy
+
+  signer-app:
+    image: ${SIGNER_APP_NAME}
+    container_name: ${SIGNER_APP_NAME}
+    networks:
+      - auth-network
+      - rockutor-network
+    ports:
+      - '${SIGNER_APP_PORT}:${SIGNER_APP_PORT}'
+    environment:
+      SPRING_PROFILES_ACTIVE: ${ACTIVE_PROFILES}
+      CONFIG_URL: 'http://${CONFIG_APP_NAME}:${CONFIG_APP_PORT}'
+    depends_on:
+      signer-db:
+        condition: service_healthy
+
+  editor-db:
+    image: ${POSTGRES_IMAGE}
+    container_name: ${EDITOR_DB_HOST}
+    networks:
+      - auth-network
+      - rockutor-network
+    environment:
+      - POSTGRES_USER=${EDITOR_DB_USER}
+      - POSTGRES_PASSWORD=${EDITOR_DB_PASSWORD}
+      - POSTGRES_DB=${EDITOR_DB_NAME}
+    command: postgres -p ${DATABASE_PORT}
+    ports:
+      - ${EDITOR_DB_EXT_PORT}:${DATABASE_PORT}
+    volumes:
+      - ./editor-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  signer-db:
+    image: ${POSTGRES_IMAGE}
+    container_name: ${SIGNER_DB_HOST}
+    networks:
+      - rockutor-network
+    environment:
+      - POSTGRES_USER=${SIGNER_DB_USER}
+      - POSTGRES_PASSWORD=${SIGNER_DB_PASSWORD}
+      - POSTGRES_DB=${SIGNER_DB_NAME}
+    command: postgres -p ${DATABASE_PORT}
+    ports:
+      - ${SIGNER_DB_EXT_PORT}:${DATABASE_PORT}
+    volumes:
+      - ./signer-db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.1
+    container_name: zookeeper
+    networks:
+      - rockutor-network
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
+  broker:
+    image: confluentinc/cp-kafka:7.5.1
+    container_name: broker
+    networks:
+      - rockutor-network
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    extra_hosts:
+      - "localhost: 127.0.0.1"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1

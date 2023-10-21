@@ -1,0 +1,30 @@
+version: "3"
+
+networks:
+  auth-network:
+    external: true
+  rockutor-network:
+    external: true
+  graylog-network:
+    external: true
+
+services:
+  krakend_ce:
+    container_name: krakend-gateway
+    # The :watch image restarts the service automatically when the configuration files change.
+    # Do not use this image in production, it's meant to speed up your testing and development.
+    image: devopsfaith/krakend:watch
+    volumes:
+      - ./config:/etc/krakend
+    ports:
+      - "1234:1234"
+      - "7777:8080"
+      - "8090:8090"
+    command: ["run", "-d", "-c", "/etc/krakend/krakend.json"]
+    environment:
+      FC_SETTINGS: /etc/krakend/settings
+      FC_ENABLE: 1
+    networks:
+      - auth-network
+      - graylog-network
+      - rockutor-network
