@@ -5,8 +5,8 @@ import java.util.Map;
 
 public record AttributeDto(String type,
                            String value) {
-    private static final String TYPE = "TYPE";
-    private static final String VALUE = "VALUE";
+    private static final String TYPE = "type";
+    private static final String VALUE = "value";
 
     public Map<String, Object> toMap() {
         Map<String, Object> converted = new HashMap<>(2);

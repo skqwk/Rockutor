@@ -1,6 +1,5 @@
 spring:
   application:
     name: signer
-  cloud:
-    config:
-      uri: ${CONFIG_URL:http://localhost:8888}
+  config:
+    import: optional:configserver:${CONFIG_URL:http://localhost:8888}
