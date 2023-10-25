@@ -27,7 +27,7 @@ services:
     image: redis:alpine3.16
     restart: always
     ports:
-      - "6379:6379"
+      - ${redis_port}:${redis_port}
     networks:
       - rockutor-network
 
