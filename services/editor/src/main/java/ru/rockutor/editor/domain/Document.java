@@ -1,5 +1,6 @@
 package ru.rockutor.editor.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,7 +49,7 @@ public class Document {
     /**
      * Секции документа
      */
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Section> sections = new ArrayList<>();
 
     @Transient

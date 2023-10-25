@@ -9,7 +9,7 @@ services:
     networks:
       - rockutor-network
   auth-db:
-    image: postgres:13.3
+    image: ${POSTGRES_IMAGE}
     container_name: ${DATABASE_HOST}
     environment:
       POSTGRES_DB: ${postgres_db}

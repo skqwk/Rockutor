@@ -41,11 +41,11 @@ async def login_for_access_token(
     # Здесь генерируйте и возвращайте токен OAuth 2.0
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = token_service.create_access_token(
-        data={"sub": user.username, "role": user.role}, expires_delta=access_token_expires
+        data={"sub": user.username, "role": user_find.role}, expires_delta=access_token_expires
     )
     refresh_token_expires = timedelta(minutes=config.REFRESH_TOKEN_EXPIRE_MINUTES)
     refresh_token = token_service.create_refresh_token(
-        data={"sub": user.username, "role": user.role}, expires_delta=refresh_token_expires
+        data={"sub": user.username, "role": user_find.role}, expires_delta=refresh_token_expires
     )
     return Token(access_token=access_token,
                  token_type='bearer',

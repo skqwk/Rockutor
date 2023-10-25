@@ -9,6 +9,7 @@ import ru.rockutor.editor.domain.Section;
 import ru.rockutor.editor.repo.DocumentRepo;
 import ru.rockutor.editor.usecase.UpdateSectionUseCase;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ public class UpdateSectionUseCaseImpl implements UpdateSectionUseCase {
             }
         }
 
-        foundedSection.setAttributes(existedAttributes.values().stream().toList());
+        foundedSection.setAttributes(new ArrayList<>(existedAttributes.values()));
 
         return documentRepo.save(document);
     }
