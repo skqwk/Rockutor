@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  grafana:
+    container_name: ${GRAFANA_CONT_NAME}
+    image: grafana/grafana
+    ports:
+      - ${GRAFANA_PORT_EXT}:${GRAFANA_PORT_INT}
+    networks:
+      - rockutor-network
+
+  prometheus:
+    container_name: ${PROMETHEUS_CONT_NAME}
+    image: prom/prometheus
+    ports:
+      - ${PROMETHEUS_PORT_EXT}:${PROMETHEUS_PORT_INT}
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - rockutor-network
+
+  postgres-exporter:
+    container_name: ${POSTGRES_EXPORTER_CONT_NAME_1}
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - ${POSTGRES_EXPORTER_PORT_EXT_1}:${POSTGRES_EXPORTER_PORT_INT}
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${postgres_user}:${postgres_password}@${postgres_host}:${postgres_port}/${postgres_db}?sslmode=disable"
+    links:
+      - prometheus
+    networks:
+      - rockutor-network
+
+  postgres-exporter2:
+    container_name: ${POSTGRES_EXPORTER_CONT_NAME_2}
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - ${POSTGRES_EXPORTER_PORT_EXT_2}:${POSTGRES_EXPORTER_PORT_INT}
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${EDITOR_DB_USER}:${EDITOR_DB_PASSWORD}@${EDITOR_DB_HOST}:${DATABASE_PORT}/${EDITOR_DB_NAME}?sslmode=disable"
+    links:
+      - prometheus
+    networks:
+      - rockutor-network
+
+  postgres-exporter3:
+    container_name: ${POSTGRES_EXPORTER_CONT_NAME_3}
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - ${POSTGRES_EXPORTER_PORT_EXT_3}:${POSTGRES_EXPORTER_PORT_INT}
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${SIGNER_DB_USER}:${SIGNER_DB_PASSWORD}@${SIGNER_DB_HOST}:${DATABASE_PORT}/${SIGNER_DB_NAME}?sslmode=disable"
+    links:
+      - prometheus
+    networks:
+      - rockutor-network
+
+  redis-exporter:
+    container_name: ${REDIS_CONT_NAME}
+    image: oliver006/redis_exporter
+    ports:
+      - ${REDIS_EXPORTER_PORT_EXT}:${REDIS_EXPORTER_PORT_INT}
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: ${redis_host}:${redis_port}
+    links:
+      - prometheus
+    networks:
+      - rockutor-network
+
+networks:
+  rockutor-network:
+    name: rockutor-network

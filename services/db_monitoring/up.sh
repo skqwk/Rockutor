@@ -1,0 +1,1 @@
+docker-compose -f db-monitoring-docker-compose.yml up -d
