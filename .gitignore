@@ -1,3 +1,7 @@
 .idea
 editor-db
 signer-db
+gr_data
+gr_journal
+mongo_data
+opch_data
