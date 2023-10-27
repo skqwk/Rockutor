@@ -43,8 +43,8 @@ services:
       CONFIG_URL: 'http://${CONFIG_APP_NAME}:${CONFIG_APP_PORT}'
       OTEL_SERVICE_NAME: ${EDITOR_APP_NAME}
       OTEL_METRICS_EXPORTER: none
-      OTEL_TRACES_EXPORTER: jaeger
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14250
+      OTEL_TRACES_EXPORTER: ${JAEGER_NAME}
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://${JAEGER_NAME}:${JAEGER_INT_PORT}
     depends_on:
       editor-db:
         condition: service_healthy
@@ -62,8 +62,8 @@ services:
       CONFIG_URL: 'http://${CONFIG_APP_NAME}:${CONFIG_APP_PORT}'
       OTEL_SERVICE_NAME: ${SIGNER_APP_NAME}
       OTEL_METRICS_EXPORTER: none
-      OTEL_TRACES_EXPORTER: jaeger
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14250
+      OTEL_TRACES_EXPORTER: ${JAEGER_NAME}
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://${JAEGER_NAME}:${JAEGER_INT_PORT}
     depends_on:
       signer-db:
         condition: service_healthy
