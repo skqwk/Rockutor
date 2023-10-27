@@ -34,3 +34,4 @@ services:
 networks:
   rockutor-network:
     name: rockutor-network
+    external: true

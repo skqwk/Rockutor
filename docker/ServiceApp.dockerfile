@@ -48,6 +48,8 @@ FROM ${RUNTIME_IMAGE}
 ARG APP_NAME=unknown
 ARG JAR_FILE=target/$APP_NAME-0.0.1-SNAPSHOT.jar
 COPY --from=build ${JAR_FILE} app.jar
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar .
+ENV JAVA_TOOL_OPTIONS "-javaagent:./opentelemetry-javaagent.jar"
 RUN echo "#!/bin/bash" >> entrypoint.sh && \
     echo "sleep \$ENTRY_DELAY" >> entrypoint.sh && \
     echo "java -jar app.jar" >> entrypoint.sh   && \
