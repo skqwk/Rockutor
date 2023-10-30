@@ -1,5 +1,5 @@
 ### Подсказки по K8S
 
-```agsl
+```bash
 kubectl logs <pod>
 ```
