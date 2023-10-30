@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-app-config
+  namespace: default
+data:
+  config_host: 'config-app'
+  config_port: '8888'
+  config_profile: 'docker'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: config-app
+  name: config-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-app
+  template:
+    metadata:
+      labels:
+        app: config-app
+    spec:
+      containers:
+        - image: config-app
+          imagePullPolicy: Never
+          name: config-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: config-app
+  name: config-app
+  namespace: default
+spec:
+  ports:
+    - port: 8888
+      protocol: TCP
+      targetPort: 8888
+  selector:
+    app: config-app
+  type: ClusterIP
