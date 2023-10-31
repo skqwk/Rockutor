@@ -85,3 +85,23 @@ spec:
        type: NodePort
        selector:
         app: auth-db
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+  labels:
+    app: postgres
+type: Opaque
+data:
+    postgres-root-username: cG9zdGdyZXM=
+    postgres-root-password: cG9zdGdyZXM=
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configmap
+  labels:
+    app: postgres
+data:
+  postgres-dbname: petshop
