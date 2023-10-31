@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: krakend
+spec:
+  selector:
+    matchLabels:
+      app: krakend
+  template:
+    metadata:
+      labels:
+        app: krakend
+    spec:
+      containers:
+        - image: krakend
+          imagePullPolicy: Never
+          name: krakend
+          command: [ "/usr/bin/krakend" ]
+          args: [ "run", "-d", "-c", "/etc/krakend/krakend.json", "-p", "8080" ]
+          env:
+            - name: FC_SETTINGS
+              value: '/etc/krakend/settings'
+            - name: FC_ENABLE
+              value: '1'
+            - name: KRAKEND_PORT
+              value: "8080"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: krakend
+  name: krakend
+  namespace: default
+spec:
+  ports:
+    - port: 8080
+      name: 'gateway'
+      protocol: TCP
+      targetPort: 8080
+    - port: 8090
+      name: 'logs'
+      protocol: TCP
+      targetPort: 8090
+  type: ClusterIP
+  selector:
+    app: krakend

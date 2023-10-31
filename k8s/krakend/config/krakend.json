@@ -1,0 +1,257 @@
+{
+  "$schema": "https://www.krakend.io/schema/krakend.json",
+  "version": 3,
+  "name": "krakend-gateway",
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "port": 8080,
+  "endpoints": [
+    {
+      "endpoint": "/documents",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "disable_host_sanitize": false,
+          "host": [
+            "{{ $.env.editor_host }}"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/documents/{id}",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents/{id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/documents",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/documents/{id}/section/{section_id}",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents/{id}/section/{section_id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/documents/{id}/section/{section_id}",
+      "method": "PUT",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents/{id}/section/{section_id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/documents/{id}/section/{section_id}",
+      "method": "DELETE",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents/{id}/section/{section_id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/documents/{id}",
+      "method": "DELETE",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/documents/{id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/sendForSigning/{id}",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/sendForSigning/{id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.editor_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/requests",
+      "method": "GET",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/requests",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "{{ $.env.signer_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/sign",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/sign",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.signer_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/cancel",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/cancel",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.signer_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/register",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/register",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.auth_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/token",
+      "method": "POST",
+      "output_encoding": "json",
+      "input_headers": [ "*" ],
+      "backend": [
+        {
+          "url_pattern": "/token",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "{{ $.env.auth_host }}"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }
+  ],
+  "extra_config": {
+    "telemetry/gelf": {
+      "address": "graylog:12201",
+      "enable_tcp": false
+    },
+    "telemetry/logging": {
+      "level": "INFO",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": false
+    }
+  }
+}
