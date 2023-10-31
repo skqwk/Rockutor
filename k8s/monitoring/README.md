@@ -1,0 +1,1 @@
+### kubectl create configmap prometheus-config --from-file=prometheus.yml
