@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-db-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring-db-prometheus
+  template:
+    metadata:
+      labels:
+        app: monitoring-db-prometheus
+    spec:
+      containers:
+        - name: monitoring-db-prometheus
+          image: prom/prometheus:latest
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config
+              mountPath: /etc/prometheus
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-db-prometheus
+spec:
+  selector:
+    app: monitoring-db-prometheus
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
