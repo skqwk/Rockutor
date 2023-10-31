@@ -60,6 +60,16 @@ spec:
           ports:
             - containerPort: 5432
               name: editor-db
+          readinessProbe:
+            exec:
+              command: [
+                        'psql', 'editor',
+                        '-U', 'editor',
+                        '-d', 'editor-db',
+                        '-c', 'SELECT 1'
+              ]
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
           volumeMounts:
             - name: editor-db-storage
               mountPath: /var/lib/postgresql/data

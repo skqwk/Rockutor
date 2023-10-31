@@ -1,0 +1,258 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: graylog-config
+  namespace: default
+data:
+  root_username: 'admin'
+  root_password_sha2: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918'
+  username: 'graylog-user'
+  password_secret: 'graylog-password'
+  http_bind_address: '0.0.0.0:9000'
+  http_external_uri: 'http://localhost:9000/'
+  elasticsearch_hosts: 'http://opensearch:9200'
+  mongodb_uri: 'mongodb://mongodb:27017/graylog'
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: graylog-data-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Ki
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: graylog-journal-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Ki
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graylog
+spec:
+  selector:
+    matchLabels:
+      app: graylog
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: graylog
+    spec:
+      volumes:
+        - name: graylog-data-storage
+          persistentVolumeClaim:
+            claimName: graylog-data-pv-claim
+        - name: graylog-journal-storage
+          persistentVolumeClaim:
+            claimName: graylog-journal-pv-claim
+      containers:
+        - image: graylog/graylog:5.0
+          name: graylog
+          env:
+            - name: GRAYLOG_NODE_ID_FILE
+              value: "/usr/share/graylog/data/config/node-id"
+            - name: GRAYLOG_ROOT_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: root_username
+            - name: GRAYLOG_ROOT_PASSWORD_SHA2
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: root_password_sha2
+            - name: GRAYLOG_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: username
+            - name: GRAYLOG_PASSWORD_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: password_secret
+            - name: GRAYLOG_HTTP_BIND_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: http_bind_address
+            - name: GRAYLOG_HTTP_EXTERNAL_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: http_external_uri
+            - name: GRAYLOG_ELASTICSEARCH_HOSTS
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: elasticsearch_hosts
+            - name: GRAYLOG_MONGODB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: graylog-config
+                  key: mongodb_uri
+          volumeMounts:
+            - name: graylog-data-storage
+              mountPath: /usr/share/graylog/data/data
+            - name: graylog-journal-storage
+              mountPath: /usr/share/graylog/data/journal
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: graylog
+  name: graylog
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - port: 12201
+      name: 'gelf-udp'
+      protocol: UDP
+      targetPort: 12201
+    - port: 9000
+      name: 'server-api'
+      protocol: TCP
+      targetPort: 9000
+  selector:
+    app: graylog
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-db-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      volumes:
+        - name: mongo-db-storage
+          persistentVolumeClaim:
+            claimName: mongo-db-pv-claim
+      containers:
+        - image: mongo:7.0.2
+          name: mongodb
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo-db-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: mongodb
+  name: mongodb
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - port: 27017
+      protocol: TCP
+      targetPort: 27017
+  selector:
+    app: mongodb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opensearch-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch
+spec:
+  selector:
+    matchLabels:
+      app: opensearch
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: opensearch
+    spec:
+      volumes:
+        - name: opensearch-storage
+          persistentVolumeClaim:
+            claimName: opensearch-pv-claim
+      initContainers:
+        - name: init-sysctl
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: [ "sysctl", "-w", "vm.max_map_count=262144" ]
+          securityContext:
+            privileged: true
+      containers:
+        - image: opensearchproject/opensearch:2.10.0
+          name: opensearch
+          env:
+            - name: OPENSEARCH_JAVA_OPTS
+              value: '-Xms1g -Xmx1g'
+            - name: bootstrap.memory_lock
+              value: 'true'
+            - name: discovery.type
+              value: 'single-node'
+            - name: action.auto_create_index
+              value: 'false'
+            - name: plugins.security.ssl.http.enabled
+              value: 'false'
+            - name: plugins.security.disabled
+              value: 'true'
+          volumeMounts:
+            - mountPath: /usr/share/opensearch/data
+              name: opensearch-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: opensearch
+  name: opensearch
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9200
+      protocol: TCP
+      targetPort: 9200
+  selector:
+    app: opensearch
