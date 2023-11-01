@@ -33,7 +33,6 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 6379
-        # data volume where redis writes data
         volumeMounts:
         - name: data
           mountPath: /data
@@ -43,7 +42,6 @@ spec:
         persistentVolumeClaim:
           claimName: redis-data
 ---
-# data volume
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

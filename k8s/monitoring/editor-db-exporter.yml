@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-exporter3
+  name: editor-db-exporter
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-exporter3
+      app: editor-db-exporter
   template:
     metadata:
       labels:
-        app: postgres-exporter3
+        app: editor-db-exporter
     spec:
       containers:
-        - name: postgres-exporter3
+        - name: editor-db-exporter
           image: prometheuscommunity/postgres-exporter:v0.10.0
           ports:
             - containerPort: 9187
           env:
             - name: DATA_SOURCE_NAME
-              value: "postgresql://signer:signer@signer-db:5432/signer-db?sslmode=disable"
+              value: "postgresql://editor:editor@editor-db:5432/editor-db?sslmode=disable"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-exporter3
+  name: editor-db-exporter
 spec:
   selector:
-    app: postgres-exporter3
+    app: editor-db-exporter
   ports:
     - name: http
       protocol: TCP
