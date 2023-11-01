@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jaeger-config
+  namespace: default
+data:
+  host-name: 'jaeger'
+  port: '14250'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jaeger
+  name: jaeger
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      containers:
+        - image: jaegertracing/all-in-one:1.50
+          name: jaeger
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: jaeger
+  name: jaeger
+  namespace: default
+spec:
+  ports:
+    - port: 14250
+      name: 'tcp-port'
+      protocol: TCP
+      targetPort: 14250
+    - port: 16686
+      name: 'ui-port'
+      protocol: TCP
+      targetPort: 16686
+  selector:
+    app: jaeger
+  type: ClusterIP
