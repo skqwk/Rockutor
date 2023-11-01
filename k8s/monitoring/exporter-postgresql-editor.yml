@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-exporter2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-exporter2
+  template:
+    metadata:
+      labels:
+        app: postgres-exporter2
+    spec:
+      containers:
+        - name: postgres-exporter2
+          image: prometheuscommunity/postgres-exporter:v0.10.0
+          ports:
+            - containerPort: 9187
+          env:
+            - name: DATA_SOURCE_NAME
+              value: "postgresql://editor:editor@editor-db:5432/editor-db?sslmode=disable"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-exporter2
+spec:
+  selector:
+    app: postgres-exporter2
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9187
+      targetPort: 9187
