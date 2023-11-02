@@ -9,6 +9,14 @@ data:
   postgres_db: 'editor-db'
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: max-connections
+  namespace: default
+data:
+  max-connections.sql: "ALTER SYSTEM SET max_connections = 500;"
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: editor-db-pv-claim
@@ -17,7 +25,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 2Gi
+      storage: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -36,6 +44,9 @@ spec:
         - name: editor-db-storage
           persistentVolumeClaim:
             claimName: editor-db-pv-claim
+        - name: max-connections
+          configMap:
+            name: max-connections
       containers:
         - image: postgres:15
           name: editor-db
@@ -73,6 +84,8 @@ spec:
           volumeMounts:
             - name: editor-db-storage
               mountPath: /var/lib/postgresql/data
+            - name: max-connections
+              mountPath: /docker-entrypoint-initdb.d
 ---
 apiVersion: v1
 kind: Service

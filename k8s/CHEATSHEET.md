@@ -11,10 +11,13 @@ kubectl delete deployment broker
 kubectl delete deployment zookeeper 
 kubectl delete deployment editor-db 
 kubectl delete deployment editor-app 
+kubectl delete hpa editor-app-hpa 
 kubectl delete deployment signer-app 
+kubectl delete hpa signer-app-hpa 
 kubectl delete deployment signer-db 
 kubectl delete deployment config-app
 kubectl delete deployment auth-app
+kubectl delete hpa auth-app-hpa 
 kubectl delete deployment auth-db
 kubectl delete deployment auth-redis
 kubectl delete deployment graylog
@@ -57,5 +60,16 @@ kubectl apply -f signer-db-exporter.yml
 kubectl apply -f editor-db-exporter.yml
 kubectl apply -f prometheus-deploy.yml
 kubectl apply -f grafana.yml
+```
+
+Для мониторинга потребления подов с частотой 1 секунда. `Powershell`
+```bash
+while (1) {kubectl top pod; sleep 1; clear;}
+```
+
+Просмотр auto-scaler'ов
+```bash
+kubectl get hpa
+kubectl describe hpa
 ```
 
