@@ -17,10 +17,15 @@ spec:
     spec:
       containers:
         - name: auth-app
-          image: auth-auth-app:latest
+          image: auth-app
           imagePullPolicy: Never
           ports:
             - containerPort: 8012
+          env:
+            - name: postgres_host
+              value: auth-db
+            - name: redis_host
+              value: auth-redis
 ---
 apiVersion: v1
 kind: Service

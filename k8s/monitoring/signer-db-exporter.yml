@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-exporter
+  name: signer-db-exporter
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-exporter
+      app: signer-db-exporter
   template:
     metadata:
       labels:
-        app: postgres-exporter
+        app: signer-db-exporter
     spec:
       containers:
-        - name: postgres-exporter
+        - name: signer-db-exporter
           image: prometheuscommunity/postgres-exporter:v0.10.0
           ports:
             - containerPort: 9187
           env:
             - name: DATA_SOURCE_NAME
-              value: "postgresql://postgres:postgres@auth-db:5432/petshop?sslmode=disable"
+              value: "postgresql://signer:signer@signer-db:5432/signer-db?sslmode=disable"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-exporter
+  name: signer-db-exporter
 spec:
   selector:
-    app: postgres-exporter
+    app: signer-db-exporter
   ports:
     - name: http
       protocol: TCP

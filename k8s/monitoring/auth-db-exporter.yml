@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-exporter2
+  name: auth-db-exporter
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-exporter2
+      app: auth-db-exporter
   template:
     metadata:
       labels:
-        app: postgres-exporter2
+        app: auth-db-exporter
     spec:
       containers:
-        - name: postgres-exporter2
+        - name: auth-db-exporter
           image: prometheuscommunity/postgres-exporter:v0.10.0
           ports:
             - containerPort: 9187
           env:
             - name: DATA_SOURCE_NAME
-              value: "postgresql://editor:editor@editor-db:5432/editor-db?sslmode=disable"
+              value: "postgresql://postgres:postgres@auth-db:5432/petshop?sslmode=disable"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-exporter2
+  name: auth-db-exporter
 spec:
   selector:
-    app: postgres-exporter2
+    app: auth-db-exporter
   ports:
     - name: http
       protocol: TCP
