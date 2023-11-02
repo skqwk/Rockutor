@@ -26,6 +26,14 @@ spec:
               value: auth-db
             - name: redis_host
               value: auth-redis
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8012
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8012
 ---
 apiVersion: v1
 kind: Service

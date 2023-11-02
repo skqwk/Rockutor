@@ -46,6 +46,25 @@ spec:
           image: prom/prometheus:latest
           ports:
             - containerPort: 9090
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9187
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9187
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 9187
+            failureThreshold: 30
+            periodSeconds: 10
           volumeMounts:
             - name: prometheus-config
               mountPath: /etc/prometheus

@@ -10,6 +10,11 @@ from inject import get_user_service
 router = APIRouter()
 
 
+@router.get("/health")
+def read_root():
+    return {"Hello": "World"}
+
+
 @router.post("/register",
              responses={
                  200: {"model": SuccessResponseRegister, "description": "Token is valid"},
