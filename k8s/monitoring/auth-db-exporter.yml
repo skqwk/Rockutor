@@ -20,6 +20,28 @@ spec:
           env:
             - name: DATA_SOURCE_NAME
               value: "postgresql://postgres:postgres@auth-db:5432/petshop?sslmode=disable"
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9187
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9187
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /metrics
+              port: 9187
+            failureThreshold: 30
+            periodSeconds: 10
+          lifecycle:
+            restartPolicy:
+              condition: on-failure
 ---
 apiVersion: v1
 kind: Service
