@@ -36,7 +36,7 @@ spec:
                  key: postgres-dbname
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgredb
+              name: auth-db-storage
             - mountPath: /docker-entrypoint-initdb.d
               name: postgresql-initdb
           readinessProbe:
@@ -57,24 +57,24 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
       volumes:
-        - name: postgredb
+        - name: auth-db-storage
           persistentVolumeClaim:
-            claimName: postgres-pv-claim
+            claimName: auth-db-pv-claim
         - name: postgresql-initdb
           configMap:
-            name: postgresql-initdb-config
+            name: auth-initdb-config
 ---
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: postgres-pv-volume
+  name: auth-db-pv
   labels:
     type: local
     app: auth-db
 spec:
   storageClassName: manual
   capacity:
-    storage: 2Gi
+    storage: 100Mi
   accessModes:
     - ReadWriteMany
   hostPath:
@@ -83,7 +83,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: postgres-pv-claim
+  name: auth-db-pv-claim
   labels:
     app: auth-db
 spec:
@@ -92,7 +92,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2Gi
+      storage: 100Mi
 ---
 apiVersion: v1
 kind: Service
@@ -132,7 +132,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgresql-initdb-config
+  name: auth-initdb-config
   labels:
     app: postgres
 data:

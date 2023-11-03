@@ -1,3 +1,18 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: editor-app-autoscale
+  name: editor-app-hpa
+  namespace: default
+spec:
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: editor-app
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +21,6 @@ metadata:
   name: editor-app
   namespace: default
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: editor-app
@@ -65,6 +79,9 @@ spec:
                   name: jaeger-config
             - name: OTEL_EXPORTER_JAEGER_ENDPOINT
               value: "http://$(JAEGER_NAME):$(JAEGER_PORT)"
+          resources:
+            requests:
+              cpu: 100m
 ---
 apiVersion: v1
 kind: Service

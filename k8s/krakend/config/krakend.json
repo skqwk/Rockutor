@@ -100,12 +100,12 @@
     {
       "endpoint": "/documents/{id}/section/{section_id}",
       "method": "DELETE",
-      "output_encoding": "json",
+      "output_encoding": "no-op",
       "input_headers": [ "*" ],
       "backend": [
         {
           "url_pattern": "/documents/{id}/section/{section_id}",
-          "encoding": "json",
+          "encoding": "no-op",
           "sd": "static",
           "method": "DELETE",
           "host": [
@@ -118,12 +118,12 @@
     {
       "endpoint": "/documents/{id}",
       "method": "DELETE",
-      "output_encoding": "json",
+      "output_encoding": "no-op",
       "input_headers": [ "*" ],
       "backend": [
         {
           "url_pattern": "/documents/{id}",
-          "encoding": "json",
+          "encoding": "no-op",
           "sd": "static",
           "method": "DELETE",
           "host": [

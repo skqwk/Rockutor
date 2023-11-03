@@ -1,3 +1,18 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: auth-app-autoscale
+  name: auth-app-hpa
+  namespace: default
+spec:
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auth-app
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +21,6 @@ metadata:
   name: auth-app
   namespace: default
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: auth-app
@@ -26,6 +40,9 @@ spec:
               value: auth-db
             - name: redis_host
               value: auth-redis
+          resources:
+            requests:
+              cpu: 100m
           readinessProbe:
             httpGet:
               path: /health
