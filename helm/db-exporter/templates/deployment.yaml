@@ -18,8 +18,8 @@ spec:
           ports:
             - containerPort: {{.Values.containers.port}}
           env:
-            - name: {{.Values.DATA_SOURCE_NAME}}
-              value: "{{.Values.datasource_name}}"
+            - name: {{.Values.datasource_name}}
+              value: "{{.Values.datasource_name_value}}"
           livenessProbe:
             httpGet:
               path: {{.Values.containers.check_path}}

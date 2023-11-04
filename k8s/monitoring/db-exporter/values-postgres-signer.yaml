@@ -1,2 +1,0 @@
-datasource_name: postgresql://signer:signer@signer-db:5432/signer-db?sslmode=disable
-app_name: signer-db-exporter

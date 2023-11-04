@@ -5,4 +5,4 @@ containers:
   check_path: /metrics
   port: 9187
 
-DATA_SOURCE_NAME: DATA_SOURCE_NAME
+datasource_name: DATA_SOURCE_NAME
