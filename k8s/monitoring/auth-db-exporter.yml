@@ -39,7 +39,7 @@ spec:
               port: 9187
             failureThreshold: 30
             periodSeconds: 10
-      restartPolicy: OnFailure
+      restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
