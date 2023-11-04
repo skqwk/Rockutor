@@ -1,0 +1,35 @@
+# Общие значения для сервисов editor, signer
+readinessProbe:
+  path: /actuator/health/readiness
+livenessProbe:
+  path: /actuator/health/liveness
+
+env:
+  CONFIG_APP_NAME:
+    type: configMapEnv
+    configMapName: config-app-config
+    key: config_host
+  CONFIG_APP_PORT:
+    type: configMapEnv
+    configMapName: config-app-config
+    key: config_port
+  CONFIG_URL:
+    type: valueEnv
+    value: "http://$(CONFIG_APP_NAME):$(CONFIG_APP_PORT)"
+  OTEL_METRICS_EXPORTER:
+    type: valueEnv
+    value: none
+  JAEGER_NAME:
+    type: configMapEnv
+    configMapName: jaeger-config
+    key: host-name
+  OTEL_TRACES_EXPORTER:
+    type: valueEnv
+    value: "$(JAEGER_NAME)"
+  JAEGER_PORT:
+    type: configMapEnv
+    configMapName: jaeger-config
+    key: port
+  OTEL_EXPORTER_JAEGER_ENDPOINT:
+    type: valueEnv
+    value: "http://$(JAEGER_NAME):$(JAEGER_PORT)"

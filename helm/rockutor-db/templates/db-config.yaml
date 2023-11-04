@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.db.name }}-db-config
+  namespace: default
+data:
+  postgres_user: '{{ .Values.db.name }}'
+  postgres_password: '{{ .Values.db.name }}'
+  postgres_db: '{{ .Values.db.name }}-db'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.db.name }}-max-connections
+  namespace: default
+data:
+  max-connections.sql: "ALTER SYSTEM SET max_connections = 500;"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.db.name }}-db-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.db.name }}-db
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.db.name }}-db
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.db.name }}-db
+    spec:
+      volumes:
+        - name: {{ .Values.db.name }}-db-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.db.name }}-db-pv-claim
+        - name: max-connections
+          configMap:
+            name: {{ .Values.db.name }}-max-connections
+      containers:
+        - image: postgres:15
+          name: {{ .Values.db.name }}-db
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.db.name }}-db-config
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.db.name }}-db-config
+                  key: postgres_password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.db.name }}-db-config
+                  key: postgres_db
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+              name: {{ .Values.db.name }}-db
+          readinessProbe:
+            exec:
+              command: [
+                'psql', '{{ .Values.db.name }}',
+                '-U', '{{ .Values.db.name }}',
+                '-d', '{{ .Values.db.name }}-db',
+                '-c', 'SELECT 1'
+              ]
+            initialDelaySeconds: 15
+            timeoutSeconds: 2
+          volumeMounts:
+            - name: {{ .Values.db.name }}-db-storage
+              mountPath: /var/lib/postgresql/data
+            - name: max-connections
+              mountPath: /docker-entrypoint-initdb.d
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.db.name }}-db
+  name: {{ .Values.db.name }}-db
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app: {{ .Values.db.name }}-db
