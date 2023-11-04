@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.app_name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.app_name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.app_name}}
+    spec:
+      containers:
+        - name: {{.Values.app_name}}
+          image: {{.Values.image.name}}
+          ports:
+            - containerPort: {{.Values.containers.port}}
+          env:
+            - name: {{.Values.datasource_name}}
+              value: "{{.Values.datasource_name_value}}"
+          livenessProbe:
+            httpGet:
+              path: {{.Values.containers.check_path}}
+              port: {{.Values.containers.port}}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: {{.Values.containers.check_path}}
+              port: {{.Values.containers.port}}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: {{.Values.containers.check_path}}
+              port: {{.Values.containers.port}}
+            failureThreshold: 30
+            periodSeconds: 10
+      restartPolicy: Always

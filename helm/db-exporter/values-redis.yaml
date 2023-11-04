@@ -1,0 +1,11 @@
+image:
+  name: oliver006/redis_exporter:latest
+
+containers:
+  check_path: /metrics
+  port: 9121
+
+datasource_name: REDIS_ADDR
+datasource_name_value: auth-redis:6379
+
+app_name: auth-redis-exporter

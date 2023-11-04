@@ -1,0 +1,2 @@
+datasource_name_value: postgresql://editor:editor@editor-db:5432/editor-db?sslmode=disable
+app_name: editor-db-exporter

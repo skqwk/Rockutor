@@ -1,0 +1,8 @@
+image:
+  name: prometheuscommunity/postgres-exporter:v0.10.0
+
+containers:
+  check_path: /metrics
+  port: 9187
+
+datasource_name: DATA_SOURCE_NAME
