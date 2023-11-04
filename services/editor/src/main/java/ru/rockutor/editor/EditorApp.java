@@ -8,7 +8,10 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
  * Исключаем SecurityAutoConfiguration,
  * т.к. используем собственную конфигурацию
  */
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@SpringBootApplication(exclude = {
+        SecurityAutoConfiguration.class,
+        org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration.class
+})
 public class EditorApp {
 
     public static void main(String[] args) {
