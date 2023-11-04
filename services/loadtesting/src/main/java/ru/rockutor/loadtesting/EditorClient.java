@@ -16,7 +16,6 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class EditorClient {
-    private static final String GATEWAY = "http://localhost:7777";
     private static final String DOCUMENTS = "/documents";
     private static final String DOCUMENTS_ID = "/documents/{documentId}";
     private static final String SEND_FOR_SIGNING = "/sendForSigning/{documentId}";
@@ -25,6 +24,7 @@ public class EditorClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final User user;
+    private final String gateway;
 
     public UUID createDocument() {
         var headers = getHeaders();
@@ -119,6 +119,6 @@ public class EditorClient {
     }
 
     private String getUrl(String endpoint) {
-        return GATEWAY + endpoint;
+        return gateway + endpoint;
     }
 }

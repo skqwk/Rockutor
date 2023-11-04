@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class SignerClient {
-    private static final String GATEWAY = "http://localhost:7777";
     private static final String REQUESTS = "/requests";
     private static final String SIGN_DOCUMENT = "/sign";
     private static final String TOKEN = "/token";
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final User user;
+    private final String gateway;
 
     public List<UUID> getSigningRequests() {
         var headers = getHeaders();
@@ -86,6 +86,6 @@ public class SignerClient {
     }
 
     private String getUrl(String endpoint) {
-        return GATEWAY + endpoint;
+        return gateway + endpoint;
     }
 }

@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
@@ -6,12 +6,21 @@ metadata:
   name: editor-app-hpa
   namespace: default
 spec:
-  maxReplicas: 3
-  targetCPUUtilizationPercentage: 60
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: editor-app
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -82,6 +91,20 @@ spec:
           resources:
             requests:
               cpu: 100m
+          ports:
+            - containerPort: 8081
+          readinessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/readiness
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              port: 8081
+              path: /actuator/health/liveness
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
 ---
 apiVersion: v1
 kind: Service

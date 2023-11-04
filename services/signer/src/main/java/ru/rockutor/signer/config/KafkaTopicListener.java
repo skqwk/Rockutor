@@ -2,6 +2,7 @@ package ru.rockutor.signer.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.rockutor.sign.SignTask;
@@ -10,6 +11,7 @@ import ru.rockutor.signer.usecase.CreateSignRequestUseCase;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(value = "kafka.enabled")
 public class KafkaTopicListener {
     private final CreateSignRequestUseCase createSignRequestUseCase;
 
