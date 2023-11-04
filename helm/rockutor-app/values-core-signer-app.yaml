@@ -1,0 +1,16 @@
+app:
+  name: signer
+  port: 8082
+
+env:
+  POSTGRES_USER:
+    type: configMapEnv
+    configMapName: "signer-db-config"
+    key: postgres-user
+  POSTGRES_PASSWORD:
+    type: configMapEnv
+    configMapName: "signer-db-config"
+    key: postgres_password
+  OTEL_SERVICE_NAME:
+    type: valueEnv
+    value: "signer-app"

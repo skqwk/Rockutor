@@ -1,0 +1,7 @@
+apiVersion: v2
+name: rockutor-db
+description: Пакет Helm для развертывания БД Rockutor
+
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

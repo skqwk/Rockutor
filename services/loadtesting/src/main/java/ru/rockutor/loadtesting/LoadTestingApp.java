@@ -60,13 +60,13 @@ public class LoadTestingApp implements CommandLineRunner {
     private void signDocuments() {
         // 1. Авторизоваться,
         User signer = new User("signer", "signer");
-        SignerClient singerClient = new SignerClient(signer, GATEWAY);
+        SignerClient signerClient = new SignerClient(signer, GATEWAY);
 
         // 2. Получить запросы
-        List<UUID> requests = singerClient.getSigningRequests();
+        List<UUID> requests = signerClient.getSigningRequests();
 
         // 3. Подписать
-        requests.forEach(singerClient::signDocumentByRqId);
+        requests.forEach(signerClient::signDocumentByRqId);
     }
 
     private void createAndSendForSigning() {
@@ -97,9 +97,9 @@ public class LoadTestingApp implements CommandLineRunner {
 
         // 5. Подписать
         User signer = new User("signer", "signer");
-        SignerClient singerClient = new SignerClient(signer, GATEWAY);
+        SignerClient signerClient = new SignerClient(signer, GATEWAY);
 
-        singerClient.signDocumentByDocumentId(documentId);
+        signerClient.signDocumentByDocumentId(documentId);
     }
 
 
