@@ -8,3 +8,10 @@ spring:
         git:
           uri: https://github.com/skqwk/RockutorConfig
           skipSslValidation: true
+
+# Kubernetes readiness/liveness probes
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

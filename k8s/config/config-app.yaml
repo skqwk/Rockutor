@@ -29,6 +29,16 @@ spec:
         - image: config-app
           imagePullPolicy: Never
           name: config-app
+          ports:
+            - containerPort: 8888
+          readinessProbe:
+            httpGet:
+              port: 8888
+              path: /actuator/health/readiness
+          livenessProbe:
+            httpGet:
+              port: 8888
+              path: /actuator/health/readiness
 ---
 apiVersion: v1
 kind: Service

@@ -1,4 +1,4 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
@@ -6,12 +6,21 @@ metadata:
   name: auth-app-hpa
   namespace: default
 spec:
-  maxReplicas: 3
-  targetCPUUtilizationPercentage: 60
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: auth-app
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -47,10 +56,12 @@ spec:
             httpGet:
               path: /health
               port: 8012
+            initialDelaySeconds: 15
           livenessProbe:
             httpGet:
               path: /health
               port: 8012
+            initialDelaySeconds: 15
 ---
 apiVersion: v1
 kind: Service

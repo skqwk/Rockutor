@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -34,22 +35,32 @@ public class LoadTestingApp implements CommandLineRunner {
             "CONCLUSION"
     );
 
+    private static final String GATEWAY = "http://localhost:7777";
+
     @Override
     public void run(String... args) {
+        // Перед запуском тестов, убедись, что GATEWAY доступен!
         log.info("Начало сценариев");
         repeatScenario(100, this::createUpdateDeleteScenario);
+        log.info("Сценарии завершены");
     }
 
     private void repeatScenario(long times, Runnable scenario) {
+        AtomicLong counter = new AtomicLong(times);
+        Runnable counterScenario = () -> {
+            scenario.run();
+            long remaining = counter.decrementAndGet();
+            log.info("Осталось - {}", remaining);
+        };
         ExecutorService executorService = Executors.newFixedThreadPool(10);
-        List<Runnable> tasks = Stream.generate(() -> scenario).limit(times).toList();
-        tasks.forEach(executorService::submit);
+        List<Runnable> tasks = Stream.generate(() -> counterScenario).limit(times).toList();
+        tasks.forEach(Runnable::run);
     }
 
     private void signDocuments() {
         // 1. Авторизоваться,
         User signer = new User("signer", "signer");
-        SignerClient singerClient = new SignerClient(signer);
+        SignerClient singerClient = new SignerClient(signer, GATEWAY);
 
         // 2. Получить запросы
         List<UUID> requests = singerClient.getSigningRequests();
@@ -61,7 +72,7 @@ public class LoadTestingApp implements CommandLineRunner {
     private void createAndSendForSigning() {
         // 1. Авторизоваться
         User editor = new User("editor", "editor");
-        EditorClient editorClient = new EditorClient(editor);
+        EditorClient editorClient = new EditorClient(editor, GATEWAY);
 
         // 2. Создать документ
         UUID documentId = editorClient.createDocument();
@@ -73,7 +84,7 @@ public class LoadTestingApp implements CommandLineRunner {
     private void createSignScenario() {
         // 1. Авторизоваться
         User editor = new User("editor", "editor");
-        EditorClient editorClient = new EditorClient(editor);
+        EditorClient editorClient = new EditorClient(editor, GATEWAY);
 
         // 2. Создать документ
         UUID documentId = editorClient.createDocument();
@@ -86,7 +97,7 @@ public class LoadTestingApp implements CommandLineRunner {
 
         // 5. Подписать
         User signer = new User("signer", "signer");
-        SignerClient singerClient = new SignerClient(signer);
+        SignerClient singerClient = new SignerClient(signer, GATEWAY);
 
         singerClient.signDocumentByDocumentId(documentId);
     }
@@ -95,7 +106,7 @@ public class LoadTestingApp implements CommandLineRunner {
     private void createUpdateDeleteScenario() {
         // 1. Авторизоваться, получить токен
         User user = new User("editor", "editor");
-        EditorClient client = new EditorClient(user);
+        EditorClient client = new EditorClient(user, GATEWAY);
 
         // 2. Создать документ
         UUID documentId = client.createDocument();

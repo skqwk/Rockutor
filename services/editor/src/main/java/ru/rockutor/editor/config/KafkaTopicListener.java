@@ -2,6 +2,7 @@ package ru.rockutor.editor.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.rockutor.editor.domain.DocumentStatus;
@@ -14,6 +15,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(value = "kafka.enabled")
 public class KafkaTopicListener {
     private static final Map<SignStatus, DocumentStatus> SIGN_STATUS_DOCUMENT_STATUS =
             Map.of(SignStatus.SIGNING, DocumentStatus.SIGNING,
