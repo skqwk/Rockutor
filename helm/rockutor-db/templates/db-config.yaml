@@ -11,7 +11,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: max-connections
+  name: {{ .Values.db.name }}-max-connections
   namespace: default
 data:
   max-connections.sql: "ALTER SYSTEM SET max_connections = 500;"
@@ -46,7 +46,7 @@ spec:
             claimName: {{ .Values.db.name }}-db-pv-claim
         - name: max-connections
           configMap:
-            name: max-connections
+            name: {{ .Values.db.name }}-max-connections
       containers:
         - image: postgres:15
           name: {{ .Values.db.name }}-db
