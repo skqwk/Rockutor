@@ -1,0 +1,16 @@
+app:
+  name: auth
+  port: 8012
+
+readinessProbe:
+  path: /health
+livenessProbe:
+  path: /health
+
+env:
+  postgres_host:
+    type: valueEnv
+    value: auth-db
+  redis-host:
+    type: valueEnv
+    value: auth-redis

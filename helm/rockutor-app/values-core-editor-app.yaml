@@ -1,0 +1,16 @@
+app:
+  name: editor
+  port: 8081
+
+env:
+  POSTGRES_USER:
+    type: configMapEnv
+    configMapName: "editor-db-config"
+    key: postgres-user
+  POSTGRES_PASSWORD:
+    type: configMapEnv
+    configMapName: "editor-db-config"
+    key: postgres_password
+  OTEL_SERVICE_NAME:
+    type: valueEnv
+    value: "editor-app"

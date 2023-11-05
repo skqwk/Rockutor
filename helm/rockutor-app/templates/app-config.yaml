@@ -1,0 +1,91 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Values.app.name }}-app-autoscale
+  name: {{ .Values.app.name }}-app-hpa
+  namespace: default
+spec:
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.app.name }}-app
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.app.name }}-app
+  name: {{ .Values.app.name }}-app
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}-app
+    spec:
+      containers:
+        - image: {{ .Values.app.name }}-app
+          imagePullPolicy: Never
+          name: {{ .Values.app.name }}-app
+        {{- if .Values.env }}
+          env:
+            {{- range $envName, $envValue := .Values.env }}
+            - name: {{ $envName }}
+              {{- if eq $envValue.type "configMapEnv" }}
+              valueFrom:
+                configMapKeyRef:
+                  key: {{ $envValue.key }}
+                  name: {{ $envValue.configMapName }}
+              {{- else }}
+              value: {{ $envValue.value | quote}}
+              {{- end }}
+            {{- end }}
+        {{- end }}
+          resources:
+            requests:
+              cpu: 100m
+          ports:
+            - containerPort: {{ .Values.app.port }}
+          readinessProbe:
+            httpGet:
+              port: {{ .Values.app.port }}
+              path: {{ .Values.readinessProbe.path }}
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.app.port }}
+              path: {{ .Values.livenessProbe.path }}
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.app.name }}-app
+  name: {{ .Values.app.name }}-app
+  namespace: default
+spec:
+  ports:
+    - port: {{ .Values.app.port }}
+      protocol: TCP
+      targetPort: {{ .Values.app.port }}
+  selector:
+    app: {{ .Values.app.name }}-app
+  type: ClusterIP
